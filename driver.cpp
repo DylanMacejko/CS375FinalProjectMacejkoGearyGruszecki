@@ -29,7 +29,104 @@ std::string algorithm_to_string(ALGORITHM algorithm){
 
 
 std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
-	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
+	int SOURCE = 0;
+	std::string result = "";
+
+	typedef struct pair{
+		int node;
+		int weight;
+		int predecessor;
+	}pair;
+
+	std::vector<pair> minHeap;
+	std::vector<int> heapLocation;
+	
+	for(int i=0; i<graph.size(); i++){
+		pair n;
+		n.node = i;
+		n.weight = -1;
+		n.predecessor = -1;
+		minHeap.push_back(n);
+		heapLocation.push_back(i);
+	}
+	minHeap[heapLocation[SOURCE]].weight = 0;
+	int itemsRemain = ((int)minHeap.size());
+	while((heapLocation[SOURCE]-1)/2 >=0 && minHeap[heapLocation[SOURCE]].weight < minHeap[(heapLocation[SOURCE]-1)/2].weight){
+		int node1 = SOURCE;
+		int node2 = minHeap[(heapLocation[SOURCE]-1)/2].node;
+		pair tempPair = minHeap[heapLocation[node1]];
+		minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+		minHeap[heapLocation[node2]] = tempPair;
+		int tempLocation = heapLocation[node1];
+		heapLocation[node1] = heapLocation[node2];
+		heapLocation[node2] = tempLocation;
+	}
+
+	while(itemsRemain>0){
+		pair extractedNode = minHeap[0];
+		int node1 = minHeap[0].node;
+		int node2 = minHeap[itemsRemain-1].node;
+		pair tempPair = minHeap[heapLocation[node1]];
+		minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+		minHeap[heapLocation[node2]] = tempPair;
+		int tempLocation = heapLocation[node1];
+		heapLocation[node1] = heapLocation[node2];
+		heapLocation[node2] = tempLocation;
+		itemsRemain--;
+		int parentLocation;
+		int leftChildLocation;
+		int rightChildLocation;
+		int smallestLocation;
+		bool repeat = true;
+		int nodeSwappingDown = minHeap[0].node;
+		while(repeat){
+			parentLocation = heapLocation[nodeSwappingDown];
+		        leftChildLocation = heapLocation[nodeSwappingDown]*2+1;
+			rightChildLocation = heapLocation[nodeSwappingDown]*2+2;
+			repeat = false;
+			if(leftChildLocation<itemsRemain && minHeap[leftChildLocation].weight < minHeap[parentLocation].weight){
+				smallestLocation = leftChildLocation;
+			}else{
+				smallestLocation = parentLocation;
+			}
+			if(rightChildLocation<itemsRemain && minHeap[rightChildLocation].weight < minHeap[smallestLocation].weight){
+				smallestLocation = rightChildLocation;
+			}
+			if(smallestLocation != parentLocation){
+				int node1 = minHeap[heapLocation[nodeSwappingDown]].node;
+				int node2 = minHeap[smallestLocation].node;
+				pair tempPair = minHeap[heapLocation[node1]];
+				minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+				minHeap[heapLocation[node2]] = tempPair;
+				int tempLocation = heapLocation[node1];
+				heapLocation[node1] = heapLocation[node2];
+				heapLocation[node2] = tempLocation;
+				repeat = true;
+			}
+		}
+
+		result += std::to_string(extractedNode.node) + " ";
+		for(int i = 0; i<graph[extractedNode.node].size(); i++){
+			int adjNode = graph[extractedNode.node][i];
+			if(minHeap[heapLocation[adjNode]].weight > extractedNode.weight + 1 || minHeap[heapLocation[adjNode]].weight == -1){
+				minHeap[heapLocation[adjNode]].weight = extractedNode.weight + 1;
+				minHeap[heapLocation[adjNode]].predecessor = extractedNode.node;
+				while((heapLocation[adjNode]-1)/2 >=0 && minHeap[heapLocation[adjNode]].weight < minHeap[(heapLocation[adjNode]-1)/2].weight){
+					int node1 = adjNode;
+					int node2 = minHeap[(heapLocation[adjNode]-1)/2].node;
+					pair tempPair = minHeap[heapLocation[node1]];
+					minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+					minHeap[heapLocation[node2]] = tempPair;
+					int tempLocation = heapLocation[node1];
+					heapLocation[node1] = heapLocation[node2];
+					heapLocation[node2] = tempLocation;
+				}
+			}
+		}
+	}
+
+	
+	return result;
 }
 std::string dijkstras_fib_heap(std::vector<std::vector<int>> graph){
 	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
