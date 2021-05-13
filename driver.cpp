@@ -9,6 +9,7 @@
 #include <sstream>
 #include <chrono>
 
+typedef std::chrono::high_resolution_clock Clock;
 
 enum ALGORITHM{
 	DIJKSTRAS_MIN_HEAP = 0,
@@ -30,14 +31,14 @@ std::string algorithm_to_string(ALGORITHM algorithm){
 	return result;
 }
 
-
 std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
-	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
+	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";	
 }
 std::string dijkstras_fib_heap(std::vector<std::vector<int>> graph){
 	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
 }
 std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std::vector<std::vector<int>> &weight){
+	auto t1 = Clock::now();
 	std::vector<long> dist(graph.size(), std::numeric_limits<int>::max());
 	dist[source] = 0;
 	for(std::size_t i = 1; i < graph.size(); i++){
@@ -57,6 +58,7 @@ std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std:
 			}
 		}
 	}
+	auto t2 = Clock::now();
 	
 	std::stringstream result("Result: \n");
 	for(size_t i = 0; i < dist.size(); i++){
@@ -66,7 +68,7 @@ std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std:
 			result << "\tVertex " << i << " unreachable from vertex " << source << std::endl;
 		}
 	}
-
+	result << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
 	return result.str();
 }
 
@@ -109,8 +111,7 @@ int main(int argc, char **argv){
 
 	std::string result;
 	
-	typedef std::chrono::high_resolution_clock Clock;
-	auto t1 = Clock::now();
+	//auto t1 = Clock::now();
 	switch(algorithm){
 		case DIJKSTRAS_MIN_HEAP:	result = dijkstras_min_heap(graph);
 						break;
@@ -123,9 +124,8 @@ int main(int argc, char **argv){
 		
 		default:			std::cerr << "Please choose N in range [0, 2]" << std::endl;
 	}
-	auto t2 = Clock::now();
+	//auto t2 = Clock::now();
 	output << algorithm_to_string(algorithm) << std::endl << result;
-	output << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
 	output.close();
 	return 0;
 }
