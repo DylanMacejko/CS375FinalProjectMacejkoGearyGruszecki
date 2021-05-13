@@ -40,7 +40,7 @@ std::string dijkstras_fib_heap(std::vector<std::vector<int>> graph){
 std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std::vector<std::vector<int>> &weight){
 	std::vector<long> dist(graph.size(), std::numeric_limits<int>::max());
 	dist[source] = 0;
-	for(std::size_t i = 0; i < graph.size(); i++){
+	for(std::size_t i = 1; i < graph.size(); i++){
 		for(std::size_t u = 0; u < graph.size(); u++){
 			for(std::size_t v = 0; v < graph[u].size(); v++){
 				if(dist[graph[u][v]] > dist[u] + weight[u][v]){

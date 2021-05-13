@@ -9,4 +9,4 @@ BELLMAN_FORDS
 	Distance from vertex 0 to vertex 7 is 28
 	Distance from vertex 0 to vertex 8 is 36
 	Distance from vertex 0 to vertex 9 is 45
-Took 57371 nanoseconds
+Took 61286 nanoseconds
