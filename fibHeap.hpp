@@ -10,6 +10,7 @@ using namespace std;
  * Node Declaration
  */
 struct node{
+    int id;
     int n;
     int degree;
     node* parent;
@@ -57,9 +58,10 @@ node* FibonacciHeap::InitializeHeap()
 /*
  * Create Node
  */
-node* FibonacciHeap::Create_node(int value){
+node* FibonacciHeap::Create_node(int id, int value){
     node* x = new node;
     x->n = value;
+    x->id = id;
     return x;
 }
 /*
@@ -240,14 +242,13 @@ int FibonacciHeap::Consolidate(node* H1){
 /*
  *Decrease key of Nodes in Fibonnaci Heap
  */
-int FibonacciHeap::Decrease_key(node*H1, int x, int k){
+int FibonacciHeap::Decrease_key(node*H1, node * x, int k){
     node* y;
     if (H1 == NULL)
     {
-        cout<<"The Heap is Empty"<<endl;
         return 0;
     }
-    node* ptr = Find(H1, x);
+    node* ptr = x;
     if (ptr == NULL){
         return 1;
     }

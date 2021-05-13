@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <fibHeap.hpp>
 
 
 enum ALGORITHM{
@@ -31,7 +32,26 @@ std::string algorithm_to_string(ALGORITHM algorithm){
 std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
 	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
 }
+
 std::string dijkstras_fib_heap(std::vector<std::vector<int>> graph){
+	std::vector<node *> result(graph.size());
+	FibonacciHeap heap;
+	node * x;
+	node * H = heap.InitializeHeap();
+
+	result[0] = FibonacciHeap::Create_node(0, 0);
+	heap.Insert(H, result[0]);
+
+	for(int i = 1; i < graph.size(); i++){
+		result[0] = FibonacciHeap::Create_node(i, intmax_t);
+		heap.Insert(H, result[i]);
+	}
+
+	
+
+
+
+	
 	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
 }
 std::string bellman_fords(std::vector<std::vector<int>> graph){
