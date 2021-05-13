@@ -278,25 +278,7 @@ void Deletion(int val)
         cout << "Key Deleted" << endl;
     }
 }
-void display()
-{
-    node* ptr = mini;
-    if (ptr == NULL)
-        cout << "The Heap is Empty" << endl;
- 
-    else {
-        cout << "The root nodes of Heap are: " << endl;
-        do {
-            cout << ptr->id;
-            ptr = ptr->right;
-            if (ptr != mini) {
-                cout << "-->";
-            }
-        } while (ptr != mini && ptr->right != NULL);
-        cout << endl
-             << "The heap has " << no_of_nodes << " nodes" << endl;
-    }
-}
+
 
 enum ALGORITHM{
 	DIJKSTRAS_MIN_HEAP = 0,
@@ -326,7 +308,7 @@ std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
 std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> weight){
 	std::vector<node *> result(graph.size());
 	std::vector<bool> spt(graph.size(), false);
-	cout << "Size: " << graph.size()<<endl;
+	//cout << "Size: " << graph.size()<<endl;
 	for(uint i = 0; i < graph.size(); i++){
 		result[i] = insertion(5000, i);
 	}
@@ -336,22 +318,21 @@ std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, 
 		for(uint i = 0; i < graph.size(); i++){
 			//cout << result[i]->id << " " << result[i]->key << ", ";
 		}
-        display();
+        //display();
 		node * vert = Extract_min();
 		spt[vert->id] = true;
         
 		for(uint j = 0; j < graph[vert->id].size(); j++){
-			cout << endl << j << endl;
+			//cout << endl << j << endl;
 			if(weight[vert->id][j] > 0){
 					uint newWeight = vert->key + weight[vert->id][j];
-					cout <<"NW: " << newWeight << endl;
+					//cout <<"NW: " << newWeight << endl;
 					uint currWeight = result[graph[vert->id][j]]->key;
-                    cout <<"CW: " << currWeight << endl;
+                    //cout <<"CW: " << currWeight << endl;
 					if(newWeight < currWeight){
-                        cout << "hi" << endl;
+                        //cout << "hi" << endl;
 						Decrease_key(result[graph[vert->id][j]], newWeight);
-					}
-				
+					}	
 			}
 		}
 	}
