@@ -53,16 +53,15 @@ std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, 
 	}
 	minHeap[heapLocation[SOURCE]].weight = 0;
 	int itemsRemain = ((int)minHeap.size());
-	while((heapLocation[SOURCE]-1)/2 >=0 && (minHeap[(heapLocation[SOURCE]-1)/2].weight == -1 || minHeap[heapLocation[SOURCE]].weight < minHeap[(heapLocation[SOURCE]-1)/2].weight)){
-		int node1 = SOURCE;
-		int node2 = minHeap[(heapLocation[SOURCE]-1)/2].node;
-		pair tempPair = minHeap[heapLocation[node1]];
-		minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
-		minHeap[heapLocation[node2]] = tempPair;
-		int tempLocation = heapLocation[node1];
-		heapLocation[node1] = heapLocation[node2];
-		heapLocation[node2] = tempLocation;
-	}
+	int node1 = SOURCE;
+	int node2 = minHeap[0].node;
+	pair tempPair = minHeap[heapLocation[node1]];
+	minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+	minHeap[heapLocation[node2]] = tempPair;
+	int tempLocation = heapLocation[node1];
+	heapLocation[node1] = heapLocation[node2];
+	heapLocation[node2] = tempLocation;
+	
 
 	while(itemsRemain>0){
 		pair extractedNode = minHeap[0];
@@ -86,12 +85,12 @@ std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, 
 		        leftChildLocation = heapLocation[nodeSwappingDown]*2+1;
 			rightChildLocation = heapLocation[nodeSwappingDown]*2+2;
 			repeat = false;
-			if(leftChildLocation<itemsRemain && minHeap[leftChildLocation].weight < minHeap[parentLocation].weight){
+			if(leftChildLocation<itemsRemain && (minHeap[parentLocation].weight==-1 || minHeap[leftChildLocation].weight < minHeap[parentLocation].weight)){
 				smallestLocation = leftChildLocation;
 			}else{
 				smallestLocation = parentLocation;
 			}
-			if(rightChildLocation<itemsRemain && minHeap[rightChildLocation].weight < minHeap[smallestLocation].weight){
+			if(rightChildLocation<itemsRemain && (minHeap[parentLocation].weight==-1 || minHeap[rightChildLocation].weight < minHeap[smallestLocation].weight)){
 				smallestLocation = rightChildLocation;
 			}
 			if(smallestLocation != parentLocation){
@@ -109,8 +108,8 @@ std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, 
 
 		for(int i = 0; i<graph[extractedNode.node].size(); i++){
 			int adjNode = graph[extractedNode.node][i];
-			if(minHeap[heapLocation[adjNode]].weight > extractedNode.weight + edgeWeight[extractedNode.node][adjNode] || minHeap[heapLocation[adjNode]].weight == -1){
-				minHeap[heapLocation[adjNode]].weight = extractedNode.weight + edgeWeight[extractedNode.node][adjNode];
+			if(minHeap[heapLocation[adjNode]].weight > extractedNode.weight + edgeWeight[extractedNode.node][i] || minHeap[heapLocation[adjNode]].weight == -1){
+				minHeap[heapLocation[adjNode]].weight = extractedNode.weight + edgeWeight[extractedNode.node][i];
 				minHeap[heapLocation[adjNode]].predecessor = extractedNode.node;
 				while((heapLocation[adjNode]-1)/2 >=0 && (minHeap[(heapLocation[adjNode]-1)/2].weight == -1 || minHeap[heapLocation[adjNode]].weight < minHeap[(heapLocation[adjNode]-1)/2].weight)){
 					int node1 = adjNode;
@@ -124,9 +123,9 @@ std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, 
 				}
 			}
 		}
-		for(int i=0; i<graph.size(); i++){
-			std::cout << "Node " << i << " has a weight of " << minHeap[heapLocation[i]].weight << std::endl;
-		}
+		//for(int i=0; i<graph.size(); i++){
+		//	std::cout << "Node " << i << " has a weight of " << minHeap[heapLocation[i]].weight << std::endl;
+		//}
 	}
 
 	for(int i=0; i<graph.size(); i++){
