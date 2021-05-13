@@ -40,12 +40,14 @@ std::string dijkstras_fib_heap(std::vector<std::vector<int>> graph){
 std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std::vector<std::vector<int>> &weight){
 	auto t1 = Clock::now();
 	std::vector<long> dist(graph.size(), std::numeric_limits<int>::max());
+	std::vector<long> prev(graph.size(), -1);
 	dist[source] = 0;
 	for(std::size_t i = 1; i < graph.size(); i++){
 		for(std::size_t u = 0; u < graph.size(); u++){
 			for(std::size_t v = 0; v < graph[u].size(); v++){
 				if(dist[graph[u][v]] > dist[u] + weight[u][v]){
 					dist[graph[u][v]] = dist[u] + weight[u][v];
+					prev[graph[u][v]] = u;
 				}
 			}
 		}
@@ -63,7 +65,17 @@ std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std:
 	std::stringstream result("Result: \n");
 	for(size_t i = 0; i < dist.size(); i++){
 		if(dist[i] != std::numeric_limits<int>::max()){
+			if(i == (size_t)source){
+				continue;
+			}
 			result << "\tDistance from vertex " << source << " to vertex " << i << " is " << dist[i] << std::endl;
+			int v = i;
+			result << "\t\tPath: ";
+			while(v != source){
+				result << v << " <- ";
+				v = prev[v];
+			}
+			result << source << std::endl;
 		}else{
 			result << "\tVertex " << i << " unreachable from vertex " << source << std::endl;
 		}
@@ -109,9 +121,18 @@ int main(int argc, char **argv){
 	}
 	input.close();
 
+	/*debug
+	for(int u = 0; u < graph.size(); u++){
+		std::cout << u << " -> ";
+		for(int v = 0; v < graph[u].size(); v++){
+			std::cout << graph[u][v] << ", ";
+		}
+		std::cout << std::endl;
+	}
+	*/
+
 	std::string result;
 	
-	//auto t1 = Clock::now();
 	switch(algorithm){
 		case DIJKSTRAS_MIN_HEAP:	result = dijkstras_min_heap(graph);
 						break;
@@ -124,7 +145,6 @@ int main(int argc, char **argv){
 		
 		default:			std::cerr << "Please choose N in range [0, 2]" << std::endl;
 	}
-	//auto t2 = Clock::now();
 	output << algorithm_to_string(algorithm) << std::endl << result;
 	output.close();
 	return 0;

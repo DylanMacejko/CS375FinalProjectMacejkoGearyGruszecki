@@ -2,7 +2,7 @@ CC = g++
 CC_FLAGS = -Wall -g -pedantic
 
 # File names
-EXEC = Submission
+EXEC = generate_tests
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
