@@ -9,6 +9,7 @@
 #include <sstream>
 #include <chrono>
 
+typedef std::chrono::high_resolution_clock Clock;
 
 enum ALGORITHM{
 	DIJKSTRAS_MIN_HEAP = 0,
@@ -33,6 +34,8 @@ std::string algorithm_to_string(ALGORITHM algorithm){
 
 std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> &edgeWeight){
 	std::stringstream result("Result: \n");
+
+	auto t1 = Clock::now();
 
 	typedef struct pair{
 		int node;
@@ -123,16 +126,17 @@ std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, 
 				}
 			}
 		}
-		//for(int i=0; i<graph.size(); i++){
-		//	std::cout << "Node " << i << " has a weight of " << minHeap[heapLocation[i]].weight << std::endl;
-		//}
 	}
+
+	auto t2 = Clock::now();
 
 	for(int i=0; i<graph.size(); i++){
 		if(i!=SOURCE){
 			result << "\tDistance from vertex " << SOURCE << " to vertex " << i << " is " << minHeap[heapLocation[i]].weight << std::endl;
 		}
 	}
+
+	result << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
 	
 	return result.str();
 }
@@ -180,8 +184,6 @@ int main(int argc, char **argv){
 	}
 	input.close();
 	std::string result;
-	typedef std::chrono::high_resolution_clock Clock;
-	auto t1 = Clock::now();
 	switch(algorithm){
 		case DIJKSTRAS_MIN_HEAP:	result = dijkstras_min_heap(source, graph, weight);
 						break;
@@ -194,9 +196,7 @@ int main(int argc, char **argv){
 		
 		default:			std::cerr << "Please choose N in range [0, 2]" << std::endl;
 	}
-	auto t2 = Clock::now();
 	output << algorithm_to_string(algorithm) << std::endl << result;
-	output << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
 	output.close();
 	return 0;
 }
