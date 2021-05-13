@@ -25,22 +25,19 @@ struct node{
  */
 class FibonacciHeap{
     private:
-        int nH;
         node *H;
     public:
+        int nH = 0;
         node* InitializeHeap();
-        int Fibonnaci_link(node*, node*, node*);
-        node *Create_node(int);
+        void Fibonnaci_link(node*, node*, node*);
+        node *Create_node(int, int);
         node *Insert(node *, node *);
         node *Union(node *, node *);
         node *Extract_Min(node *);
-        int Consolidate(node *);
-        int Display(node *);
-        node *Find(node *, int);
-        int Decrease_key(node *, int, int);
-        int Delete_key(node *,int);
-        int Cut(node *, node *, node *);
-        int Cascase_cut(node *, node *);
+        void Consolidate(node *);
+        int Decrease_key(node *, node *, int);
+        void Cut(node *, node *, node *);
+        void Cascase_cut(node *, node *);
         FibonacciHeap()
         {
             H = InitializeHeap();
@@ -94,7 +91,7 @@ node* FibonacciHeap::Insert(node* H, node* x){
 /*
  * Link Nodes in Fibonnaci Heap
  */
-int FibonacciHeap::Fibonnaci_link(node* H1, node* y, node* z){
+void FibonacciHeap::Fibonnaci_link(node* H1, node* y, node* z){
     (y->left)->right = y->right;
     (y->right)->left = y->left;
     if (z->right == z)
@@ -171,16 +168,17 @@ node* FibonacciHeap::Extract_Min(node* H1){
         Consolidate(H1);
     }
     nH = nH - 1;
+    
     return p;
 }
 /*
  *Consolidate Node in Fibonnaci Heap
  */
-int FibonacciHeap::Consolidate(node* H1){
+void FibonacciHeap::Consolidate(node* H1){
     int d, i;
     float f = (log(nH)) / (log(2));
     int D = f;
-    node* A[D];
+    node** A = new node*[D];
     for (i = 0; i <= D; i++)
         A[i] = NULL;
     node* x = H1;
@@ -203,9 +201,10 @@ int FibonacciHeap::Consolidate(node* H1){
             if (y == H1)
                 H1 = x;
             Fibonnaci_link(H1, y, x);
-            if (x->right == x)
+            if (x->right == x){
                 H1 = x;
                 A[d] = NULL;
+            }
             d = d + 1;
         }
         A[d] = x;
@@ -266,7 +265,7 @@ int FibonacciHeap::Decrease_key(node*H1, node * x, int k){
 /*
  * Cut Nodes in Fibonnaci Heap
  */
-int FibonacciHeap::Cut(node* H1, node* x, node* y){
+void FibonacciHeap::Cut(node* H1, node* x, node* y){
     if (x == x->right)
         y->child = NULL;
     (x->left)->right = x->right;
@@ -286,7 +285,7 @@ int FibonacciHeap::Cut(node* H1, node* x, node* y){
 /*
  * Cascade Cutting in Fibonnaci Heap
  */
-int FibonacciHeap::Cascase_cut(node* H1, node* y){
+void FibonacciHeap::Cascase_cut(node* H1, node* y){
     node* z = y->parent;
     if (z != NULL)
     {
@@ -300,39 +299,7 @@ int FibonacciHeap::Cascase_cut(node* H1, node* y){
         }
     }
 }
-/*
- * Find Nodes in Fibonnaci Heap
- */
-node* FibonacciHeap::Find(node* H, int k){
-    node* x = H;
-    x->C = 'Y';
-    node* p = NULL;
-    if (x->n == k) 
-        p = x;
-        x->C = 'N';
-        return p;
-    }
-    if (p == NULL){
-        if (x->child != NULL )
-            p = Find(x->child, k);
-        if ((x->right)->C != 'Y' )
-            p = Find(x->right, k);
-    }
-    x->C = 'N';
-    return p;
-}
-/*
- * Delete Nodes in Fibonnaci Heap
- */
-int FibonacciHeap::Delete_key(node* H1, int k){
-    node* np = NULL;
-    int t;
-    t = Decrease_key(H1, k, -5000);
-    if (!t)
-        np = Extract_Min(H);
 
-    return 0;
-}
 
 
 #endif
