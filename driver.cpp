@@ -5,6 +5,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <limits>
+#include <sstream>
+#include <chrono>
 
 
 enum ALGORITHM{
@@ -28,9 +31,8 @@ std::string algorithm_to_string(ALGORITHM algorithm){
 }
 
 
-std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
-	int SOURCE = 0;
-	std::string result = "";
+std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> &edgeWeight){
+	std::stringstream result("Result: \n");
 
 	typedef struct pair{
 		int node;
@@ -105,11 +107,10 @@ std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
 			}
 		}
 
-		result += std::to_string(extractedNode.node) + " ";
 		for(int i = 0; i<graph[extractedNode.node].size(); i++){
 			int adjNode = graph[extractedNode.node][i];
-			if(minHeap[heapLocation[adjNode]].weight > extractedNode.weight + 1 || minHeap[heapLocation[adjNode]].weight == -1){
-				minHeap[heapLocation[adjNode]].weight = extractedNode.weight + 1;
+			if(minHeap[heapLocation[adjNode]].weight > extractedNode.weight + edgeWeight[extractedNode.node][adjNode] || minHeap[heapLocation[adjNode]].weight == -1){
+				minHeap[heapLocation[adjNode]].weight = extractedNode.weight + edgeWeight[extractedNode.node][adjNode];
 				minHeap[heapLocation[adjNode]].predecessor = extractedNode.node;
 				while((heapLocation[adjNode]-1)/2 >=0 && (minHeap[(heapLocation[adjNode]-1)/2].weight == -1 || minHeap[heapLocation[adjNode]].weight < minHeap[(heapLocation[adjNode]-1)/2].weight)){
 					int node1 = adjNode;
@@ -123,9 +124,18 @@ std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
 				}
 			}
 		}
+		for(int i=0; i<graph.size(); i++){
+			std::cout << "Node " << i << " has a weight of " << minHeap[heapLocation[i]].weight << std::endl;
+		}
+	}
+
+	for(int i=0; i<graph.size(); i++){
+		if(i!=SOURCE){
+			result << "\tDistance from vertex " << SOURCE << " to vertex " << i << " is " << minHeap[heapLocation[i]].weight << std::endl;
+		}
 	}
 	
-	return result;
+	return result.str();
 }
 std::string dijkstras_fib_heap(std::vector<std::vector<int>> graph){
 	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
@@ -150,10 +160,31 @@ int main(int argc, char **argv){
 	
 	enum ALGORITHM algorithm = (ALGORITHM)(argv[3][0] - '0');
 
+	std::size_t size;
+	input >> size;
+
+	int source;
+	input >> source;
+
 	std::vector<std::vector<int>> graph;
+	std::vector<std::vector<int>> weight;
+	for(std::size_t i = 0; i < size; i++){
+		std::vector<int> temp;
+		graph.push_back(temp);
+		weight.push_back(temp);
+	}
+
+	int u, v, w;
+	while(input >> u >> v >> w){
+		graph[u].push_back(v);
+		weight[u].push_back(w);
+	}
+	input.close();
 	std::string result;
+	typedef std::chrono::high_resolution_clock Clock;
+	auto t1 = Clock::now();
 	switch(algorithm){
-		case DIJKSTRAS_MIN_HEAP:	result = dijkstras_min_heap(graph);
+		case DIJKSTRAS_MIN_HEAP:	result = dijkstras_min_heap(source, graph, weight);
 						break;
 		
 		case DIJKSTRAS_FIB_HEAP:	result = dijkstras_fib_heap(graph);
@@ -164,7 +195,10 @@ int main(int argc, char **argv){
 		
 		default:			std::cerr << "Please choose N in range [0, 2]" << std::endl;
 	}
+	auto t2 = Clock::now();
 	output << algorithm_to_string(algorithm) << std::endl << result;
+	output << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
+	output.close();
 	return 0;
 }
 

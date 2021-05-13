@@ -1,0 +1,11 @@
+DIJKSTRAS_MIN_HEAP
+	Distance from vertex 0 to vertex 1 is 0
+	Distance from vertex 0 to vertex 2 is 0
+	Distance from vertex 0 to vertex 3 is 0
+	Distance from vertex 0 to vertex 4 is 0
+	Distance from vertex 0 to vertex 5 is 0
+	Distance from vertex 0 to vertex 6 is 33
+	Distance from vertex 0 to vertex 7 is 33
+	Distance from vertex 0 to vertex 8 is 42
+	Distance from vertex 0 to vertex 9 is 42
+Took 694181 nanoseconds
