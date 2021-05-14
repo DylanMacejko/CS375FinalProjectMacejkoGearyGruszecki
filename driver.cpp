@@ -8,13 +8,12 @@
 #include <limits>
 #include <sstream>
 #include <chrono>
+
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 #include <malloc.h>
 #include "fibHeap.hpp"
 
-using namespace std;
 
 typedef std::chrono::high_resolution_clock Clock;
 
@@ -39,8 +38,124 @@ std::string algorithm_to_string(ALGORITHM algorithm){
 }
 
 
-std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
-	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
+
+std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> &edgeWeight){
+	std::stringstream result("Result: \n");
+
+	auto t1 = Clock::now();
+
+	typedef struct pair{
+		int node;
+		int weight;
+		int predecessor;
+	}pair;
+
+	std::vector<pair> minHeap;
+	std::vector<int> heapLocation;
+	
+	for(int i=0; i<graph.size(); i++){
+		pair n;
+		n.node = i;
+		n.weight = -1;
+		n.predecessor = -1;
+		minHeap.push_back(n);
+		heapLocation.push_back(i);
+	}
+	minHeap[heapLocation[SOURCE]].weight = 0;
+	int itemsRemain = ((int)minHeap.size());
+	int node1 = SOURCE;
+	int node2 = minHeap[0].node;
+	pair tempPair = minHeap[heapLocation[node1]];
+	minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+	minHeap[heapLocation[node2]] = tempPair;
+	int tempLocation = heapLocation[node1];
+	heapLocation[node1] = heapLocation[node2];
+	heapLocation[node2] = tempLocation;
+	
+
+	while(itemsRemain>0){
+		pair extractedNode = minHeap[0];
+		int node1 = minHeap[0].node;
+		int node2 = minHeap[itemsRemain-1].node;
+		pair tempPair = minHeap[heapLocation[node1]];
+		minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+		minHeap[heapLocation[node2]] = tempPair;
+		int tempLocation = heapLocation[node1];
+		heapLocation[node1] = heapLocation[node2];
+		heapLocation[node2] = tempLocation;
+		itemsRemain--;
+		int parentLocation;
+		int leftChildLocation;
+		int rightChildLocation;
+		int smallestLocation;
+		bool repeat = true;
+		int nodeSwappingDown = minHeap[0].node;
+		while(repeat){
+			parentLocation = heapLocation[nodeSwappingDown];
+		        leftChildLocation = heapLocation[nodeSwappingDown]*2+1;
+			rightChildLocation = heapLocation[nodeSwappingDown]*2+2;
+			repeat = false;
+			if(leftChildLocation<itemsRemain && (minHeap[parentLocation].weight==-1 || minHeap[leftChildLocation].weight < minHeap[parentLocation].weight)){
+				smallestLocation = leftChildLocation;
+			}else{
+				smallestLocation = parentLocation;
+			}
+			if(rightChildLocation<itemsRemain && (minHeap[parentLocation].weight==-1 || minHeap[rightChildLocation].weight < minHeap[smallestLocation].weight)){
+				smallestLocation = rightChildLocation;
+			}
+			if(smallestLocation != parentLocation){
+				int node1 = minHeap[parentLocation].node;
+				int node2 = minHeap[smallestLocation].node;
+				pair tempPair = minHeap[heapLocation[node1]];
+				minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+				minHeap[heapLocation[node2]] = tempPair;
+				int tempLocation = heapLocation[node1];
+				heapLocation[node1] = heapLocation[node2];
+				heapLocation[node2] = tempLocation;
+				repeat = true;
+			}
+		}
+
+		for(int i = 0; i<graph[extractedNode.node].size(); i++){
+			int adjNode = graph[extractedNode.node][i];
+			if(minHeap[heapLocation[adjNode]].weight > extractedNode.weight + edgeWeight[extractedNode.node][i] || minHeap[heapLocation[adjNode]].weight == -1){
+				minHeap[heapLocation[adjNode]].weight = extractedNode.weight + edgeWeight[extractedNode.node][i];
+				minHeap[heapLocation[adjNode]].predecessor = extractedNode.node;
+				while((heapLocation[adjNode]-1)/2 >=0 && (minHeap[(heapLocation[adjNode]-1)/2].weight == -1 || minHeap[heapLocation[adjNode]].weight < minHeap[(heapLocation[adjNode]-1)/2].weight)){
+					int node1 = adjNode;
+					int node2 = minHeap[(heapLocation[adjNode]-1)/2].node;
+					pair tempPair = minHeap[heapLocation[node1]];
+					minHeap[heapLocation[node1]] = minHeap[heapLocation[node2]];
+					minHeap[heapLocation[node2]] = tempPair;
+					int tempLocation = heapLocation[node1];
+					heapLocation[node1] = heapLocation[node2];
+					heapLocation[node2] = tempLocation;
+				}
+			}
+		}
+	}
+
+	auto t2 = Clock::now();
+
+	for(int i=0; i<graph.size(); i++){
+		if(i!=SOURCE){
+			result << "\tDistance from vertex " << SOURCE << " to vertex " << i << " is " << minHeap[heapLocation[i]].weight << std::endl;
+			int node = i;
+			result << "\t\tPath: ";
+			while(node != SOURCE){
+				result << node << " <- ";
+				node = minHeap[heapLocation[node]].predecessor;
+			}
+			result << SOURCE << std::endl;
+		}
+	}
+
+
+
+	result << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
+	
+	return result.str();
+
 }
 
 std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> weight){
@@ -85,8 +200,53 @@ std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, 
 	ret << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
 	return ret.str();
 }
-std::string bellman_fords(int source, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> weight){
-	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
+
+std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std::vector<std::vector<int>> &weight){
+	auto t1 = Clock::now();
+	std::vector<long> dist(graph.size(), std::numeric_limits<int>::max());
+	std::vector<long> prev(graph.size(), -1);
+	dist[source] = 0;
+	for(std::size_t i = 1; i < graph.size(); i++){
+		for(std::size_t u = 0; u < graph.size(); u++){
+			for(std::size_t v = 0; v < graph[u].size(); v++){
+				if(dist[graph[u][v]] > dist[u] + weight[u][v]){
+					dist[graph[u][v]] = dist[u] + weight[u][v];
+					prev[graph[u][v]] = u;
+				}
+			}
+		}
+	}
+
+	for(std::size_t u = 0; u < graph.size(); u++){
+		for(std::size_t v = 0; v < graph[u].size(); v++){
+			if(dist[graph[u][v]] > dist[u] + weight[u][v]){
+				std::cerr << "Graph contains negative weight cycle!" << std::endl;
+			}
+		}
+	}
+	auto t2 = Clock::now();
+	
+	std::stringstream result("Result: \n");
+	for(size_t i = 0; i < dist.size(); i++){
+		if(dist[i] != std::numeric_limits<int>::max()){
+			if(i == (size_t)source){
+				continue;
+			}
+			result << "\tDistance from vertex " << source << " to vertex " << i << " is " << dist[i] << std::endl;
+			int v = i;
+			result << "\t\tPath: ";
+			while(v != source){
+				result << v << " <- ";
+				v = prev[v];
+			}
+			result << source << std::endl;
+		}else{
+			result << "\tVertex " << i << " unreachable from vertex " << source << std::endl;
+		}
+	}
+	result << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
+	return result.str();
+
 }
 
 int main(int argc, char **argv){
@@ -126,12 +286,24 @@ int main(int argc, char **argv){
 	}
 	input.close();
 
+
+
+	/*debug
+	for(int u = 0; u < graph.size(); u++){
+		std::cout << u << " -> ";
+		for(int v = 0; v < graph[u].size(); v++){
+			std::cout << graph[u][v] << ", ";
+		}
+		std::cout << std::endl;
+	}
+	*/
+
+
 	std::string result;
 	
-	typedef std::chrono::high_resolution_clock Clock;
-	auto t1 = Clock::now();
+
 	switch(algorithm){
-		case DIJKSTRAS_MIN_HEAP:	result = dijkstras_min_heap(graph);
+		case DIJKSTRAS_MIN_HEAP:	result = dijkstras_min_heap(source, graph, weight);
 						break;
 		
 		case DIJKSTRAS_FIB_HEAP:	result = dijkstras_fib_heap(source, graph, weight);
@@ -144,7 +316,7 @@ int main(int argc, char **argv){
 	}
 	auto t2 = Clock::now();
 	output << algorithm_to_string(algorithm) << std::endl << result;
-	output << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
+
 	output.close();
 	return 0;
 }
