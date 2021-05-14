@@ -16,6 +16,8 @@
 
 using namespace std;
 
+typedef std::chrono::high_resolution_clock Clock;
+
 enum ALGORITHM{
 	DIJKSTRAS_MIN_HEAP = 0,
 	DIJKSTRAS_FIB_HEAP = 1,
@@ -42,6 +44,7 @@ std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
 }
 
 std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> weight){
+	auto t1 = Clock::now();
 	std::vector<node *> result(graph.size());
 	std::vector<bool> spt(graph.size(), false);
 	std::vector<std::vector<int>> parent(graph.size());
@@ -69,6 +72,7 @@ std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, 
 			}
 		}
 	}
+	auto t2 = Clock::now();
 	std::stringstream ret("Result: \n");
 	for(uint i = 0; i < result.size(); i++){
 		ret << "The Distance from node " << source << " to " << i << " is " << result[i]->key << endl;
@@ -78,6 +82,7 @@ std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, 
 		}
 		ret << endl;
 	}
+	ret << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
 	return ret.str();
 }
 std::string bellman_fords(int source, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> weight){
