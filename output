@@ -1,11 +1,20 @@
 DIJKSTRAS_MIN_HEAP
 	Distance from vertex 0 to vertex 1 is 1
+		Path: 1 <- 0
 	Distance from vertex 0 to vertex 2 is 3
+		Path: 2 <- 1 <- 0
 	Distance from vertex 0 to vertex 3 is 6
+		Path: 3 <- 2 <- 1 <- 0
 	Distance from vertex 0 to vertex 4 is 10
+		Path: 4 <- 3 <- 2 <- 1 <- 0
 	Distance from vertex 0 to vertex 5 is 15
+		Path: 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	Distance from vertex 0 to vertex 6 is 21
+		Path: 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	Distance from vertex 0 to vertex 7 is 28
+		Path: 7 <- 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	Distance from vertex 0 to vertex 8 is 36
+		Path: 8 <- 7 <- 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	Distance from vertex 0 to vertex 9 is 45
-Took 15014 nanoseconds
+		Path: 9 <- 8 <- 7 <- 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
+Took 10483 nanoseconds

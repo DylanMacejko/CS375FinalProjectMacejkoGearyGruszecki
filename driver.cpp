@@ -133,8 +133,17 @@ std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, 
 	for(int i=0; i<graph.size(); i++){
 		if(i!=SOURCE){
 			result << "\tDistance from vertex " << SOURCE << " to vertex " << i << " is " << minHeap[heapLocation[i]].weight << std::endl;
+			int node = i;
+			result << "\t\tPath: ";
+			while(node != SOURCE){
+				result << node << " <- ";
+				node = minHeap[heapLocation[node]].predecessor;
+			}
+			result << SOURCE << std::endl;
 		}
 	}
+
+
 
 	result << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
 	
