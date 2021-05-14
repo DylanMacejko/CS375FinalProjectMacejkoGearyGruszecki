@@ -9,6 +9,12 @@
 #include <sstream>
 #include <chrono>
 
+#include <cmath>
+#include <cstdlib>
+#include <malloc.h>
+#include "fibHeap.hpp"
+
+
 typedef std::chrono::high_resolution_clock Clock;
 
 enum ALGORITHM{
@@ -151,9 +157,50 @@ std::string dijkstras_min_heap(int SOURCE, std::vector<std::vector<int>> graph, 
 	return result.str();
 
 }
-std::string dijkstras_fib_heap(std::vector<std::vector<int>> graph){
-	return "THIS FUNCTION HASN'T BEEN IMPLEMENTED!\n";
+
+std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> weight){
+	auto t1 = Clock::now();
+	std::vector<node *> result(graph.size());
+	std::vector<bool> spt(graph.size(), false);
+	std::vector<std::vector<int>> parent(graph.size());
+    
+	FibHeap * heap = new FibHeap();
+
+	//cout << "Size: " << graph.size()<<endl;
+	for(uint i = 0; i < graph.size(); i++){
+		result[i] = heap->insertion(INT32_MAX, i);
+	}
+	heap->Decrease_key(result[source], 0);
+	
+	while(heap->no_of_nodes > 0){
+		node * vert = heap->Extract_min();
+		spt[vert->id] = true;
+		for(uint j = 0; j < graph[vert->id].size(); j++){
+			if(weight[vert->id][j] > 0){
+					int newWeight = vert->key + weight[vert->id][j];
+					int currWeight = result[graph[vert->id][j]]->key;
+					if(newWeight < currWeight || currWeight < 0){
+						heap->Decrease_key(result[graph[vert->id][j]], newWeight);
+						parent[graph[vert->id][j]] = parent[vert->id];
+						parent[graph[vert->id][j]].push_back(vert->id);
+					}	
+			}
+		}
+	}
+	auto t2 = Clock::now();
+	std::stringstream ret("Result: \n");
+	for(uint i = 0; i < result.size(); i++){
+		ret << "The Distance from node " << source << " to " << i << " is " << result[i]->key << endl;
+		ret << "\tPath: " << i;
+		for(int j = parent[i].size() - 1; j >= 0; j--){
+			ret <<  " <- " << parent[i][j];
+		}
+		ret << endl;
+	}
+	ret << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
+	return ret.str();
 }
+
 std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std::vector<std::vector<int>> &weight){
 	auto t1 = Clock::now();
 	std::vector<long> dist(graph.size(), std::numeric_limits<int>::max());
@@ -199,6 +246,7 @@ std::string bellman_fords(int source, std::vector<std::vector<int>> &graph, std:
 	}
 	result << "Took " << std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count() << " nanoseconds" << std::endl;
 	return result.str();
+
 }
 
 int main(int argc, char **argv){
@@ -239,6 +287,7 @@ int main(int argc, char **argv){
 	input.close();
 
 
+
 	/*debug
 	for(int u = 0; u < graph.size(); u++){
 		std::cout << u << " -> ";
@@ -252,11 +301,12 @@ int main(int argc, char **argv){
 
 	std::string result;
 	
+
 	switch(algorithm){
 		case DIJKSTRAS_MIN_HEAP:	result = dijkstras_min_heap(source, graph, weight);
 						break;
 		
-		case DIJKSTRAS_FIB_HEAP:	result = dijkstras_fib_heap(graph);
+		case DIJKSTRAS_FIB_HEAP:	result = dijkstras_fib_heap(source, graph, weight);
 						break;
 		
 		case BELLMAN_FORDS:		result = bellman_fords(source, graph, weight);
@@ -264,7 +314,9 @@ int main(int argc, char **argv){
 		
 		default:			std::cerr << "Please choose N in range [0, 2]" << std::endl;
 	}
+	auto t2 = Clock::now();
 	output << algorithm_to_string(algorithm) << std::endl << result;
+
 	output.close();
 	return 0;
 }
