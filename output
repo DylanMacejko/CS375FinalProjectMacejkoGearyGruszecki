@@ -1,12 +1,22 @@
 DIJKSTRAS_FIB_HEAP
 The Distance from node 0 to 0 is 0
+	Path: 0
 The Distance from node 0 to 1 is 1
+	Path: 1 <- 0
 The Distance from node 0 to 2 is 3
+	Path: 2 <- 1 <- 0
 The Distance from node 0 to 3 is 6
+	Path: 3 <- 2 <- 1 <- 0
 The Distance from node 0 to 4 is 10
+	Path: 4 <- 3 <- 2 <- 1 <- 0
 The Distance from node 0 to 5 is 15
+	Path: 5 <- 4 <- 3 <- 2 <- 1 <- 0
 The Distance from node 0 to 6 is 21
+	Path: 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 The Distance from node 0 to 7 is 28
+	Path: 7 <- 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 The Distance from node 0 to 8 is 36
+	Path: 8 <- 7 <- 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 The Distance from node 0 to 9 is 45
-Took 131364 nanoseconds
+	Path: 9 <- 8 <- 7 <- 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
+Took 120998 nanoseconds

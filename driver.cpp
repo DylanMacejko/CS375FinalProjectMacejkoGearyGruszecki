@@ -44,11 +44,13 @@ std::string dijkstras_min_heap(std::vector<std::vector<int>> graph){
 std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, std::vector<std::vector<int>> weight){
 	std::vector<node *> result(graph.size());
 	std::vector<bool> spt(graph.size(), false);
-    FibHeap * heap = new FibHeap();
+	std::vector<std::vector<int>> parent(graph.size());
+    
+	FibHeap * heap = new FibHeap();
 
 	//cout << "Size: " << graph.size()<<endl;
 	for(uint i = 0; i < graph.size(); i++){
-		result[i] = heap->insertion(5000, i);
+		result[i] = heap->insertion(INT32_MAX, i);
 	}
 	heap->Decrease_key(result[source], 0);
 	
@@ -57,10 +59,12 @@ std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, 
 		spt[vert->id] = true;
 		for(uint j = 0; j < graph[vert->id].size(); j++){
 			if(weight[vert->id][j] > 0){
-					uint newWeight = vert->key + weight[vert->id][j];
-					uint currWeight = result[graph[vert->id][j]]->key;
-					if(newWeight < currWeight){
+					int newWeight = vert->key + weight[vert->id][j];
+					int currWeight = result[graph[vert->id][j]]->key;
+					if(newWeight < currWeight || currWeight < 0){
 						heap->Decrease_key(result[graph[vert->id][j]], newWeight);
+						parent[graph[vert->id][j]] = parent[vert->id];
+						parent[graph[vert->id][j]].push_back(vert->id);
 					}	
 			}
 		}
@@ -68,6 +72,11 @@ std::string dijkstras_fib_heap(int source, std::vector<std::vector<int>> graph, 
 	std::stringstream ret("Result: \n");
 	for(uint i = 0; i < result.size(); i++){
 		ret << "The Distance from node " << source << " to " << i << " is " << result[i]->key << endl;
+		ret << "\tPath: " << i;
+		for(int j = parent[i].size() - 1; j >= 0; j--){
+			ret <<  " <- " << parent[i][j];
+		}
+		ret << endl;
 	}
 	return ret.str();
 }
